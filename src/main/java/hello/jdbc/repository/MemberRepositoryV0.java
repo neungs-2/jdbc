@@ -65,6 +65,46 @@ public class MemberRepositoryV0 {
         }
     }
 
+    public void update(String memberId, int money) throws SQLException {
+        String sql = "update member set money=? where member_id=?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setInt(1, money);
+            pstmt.setString(2, memberId);
+            int resultSize = pstmt.executeUpdate(); // 쿼리를 실행하고 영향받은 row수를 반환
+            log.info("resultSize={}", resultSize);
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
+    }
+
+    public void delete(String memberId) throws SQLException {
+        String sql = "delete from member where member_id = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, null);
+        }
+    }
+
     /**
      * 그냥 close 문 3개만 위치하면 한 곳에서 close하다가 오류났을 때 다른 자원들은 close되지 않아서 아래와 같이 작성
      * 리소스 정리 중요함!
