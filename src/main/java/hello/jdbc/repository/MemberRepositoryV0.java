@@ -5,6 +5,7 @@ import hello.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -31,6 +32,36 @@ public class MemberRepositoryV0 {
             throw e;
         } finally {
             close(con, pstmt, null);
+        }
+    }
+
+    public Member findById(String memberId) throws SQLException {
+        String sql = "select * from member where member_id = ?";
+
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            con = getConnection();
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, memberId);
+            rs = pstmt.executeQuery();
+
+            // 최초의 커서는 데이터를 가리키고 있지 않기 때문에 `rs.next()` 를 최초 한번은 호출해야 데이터를 조회
+            if(rs.next()) {
+                Member member = new Member();
+                member.setMemberId(rs.getString("member_id"));
+                member.setMoney(rs.getInt("money"));
+                return member;
+            } else {
+                throw new NoSuchElementException("member not found ememberId=" + memberId);
+            }
+        } catch (SQLException e) {
+            log.error("db error", e);
+            throw e;
+        } finally {
+            close(con, pstmt, rs);
         }
     }
 
