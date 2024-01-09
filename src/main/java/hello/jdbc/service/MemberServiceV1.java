@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import java.sql.SQLException;
 
 @RequiredArgsConstructor
-public class MemberSerivceV1 {
+public class MemberServiceV1 {
     private final MemberRepositoryV1 memberRepository;
 
     public void accountTransfer(String fromId, String toId, int money) throws SQLException {
