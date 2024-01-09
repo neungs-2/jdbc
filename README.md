@@ -1,6 +1,6 @@
 [MAC H2 실행법]
 - 디렉토리 이동: `cd bin`
-- 권한 주기: `chmode 755 h2.sh`
+- 권한 주기: `chmod 755 h2.sh`
 - 실행: `./h2.sh`
   - 사용자명: `sa`
   - JDBC URL
