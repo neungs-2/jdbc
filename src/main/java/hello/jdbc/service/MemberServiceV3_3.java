@@ -2,38 +2,29 @@ package hello.jdbc.service;
 
 import hello.jdbc.domain.Member;
 import hello.jdbc.repository.MemberRepositoryV3;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 import java.sql.SQLException;
 
 /**
- * 트랜잭션 - 트랜잭션 매니저
+ * 트랜잭션 - 트랜잭션 AOP
  */
 @Slf4j
-@RequiredArgsConstructor
-public class MemberServiceV3_1 {
-//    private final DataSource dataSource;
+public class MemberServiceV3_3 {
     private final MemberRepositoryV3 memberRepository;
-    private final PlatformTransactionManager transactionManager;
+    private final TransactionTemplate txTemplate;
+
+    public MemberServiceV3_3(
+            MemberRepositoryV3 memberRepository,
+            PlatformTransactionManager transactionManager
+    ) {
+        this.memberRepository = memberRepository;
+        this.txTemplate = new TransactionTemplate(transactionManager);
+    }
 
     public void accountTransfer(String fromId, String toId, int money) throws SQLException {
-        // 트랜잭션 시작
-        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
-
-        try {
-            // 비즈니스 로직
-            bizLogic(fromId, toId, money);
-
-            // 커밋, 롤백
-            transactionManager.commit(status);
-        } catch (Exception e) {
-            transactionManager.rollback(status);
-            throw new IllegalStateException(e);
-        }
-        // 이제 커밋, 롤백 시에 자동으로 커넥션을 release 해준다.
+        bizLogic(fromId, toId, money);
     }
 
     private void bizLogic(String fromId, String toId, int money) throws SQLException {

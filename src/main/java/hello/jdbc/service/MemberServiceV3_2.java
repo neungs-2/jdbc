@@ -2,14 +2,9 @@ package hello.jdbc.service;
 
 import hello.jdbc.domain.Member;
 import hello.jdbc.repository.MemberRepositoryV3;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
@@ -51,18 +46,6 @@ public class MemberServiceV3_2 {
     private void validation(Member toMember) {
         if (toMember.getMemberId().equals("ex")) {
             throw new IllegalStateException("이체중 예외 발생");
-        }
-    }
-
-    private void release(Connection con) {
-        if (con != null) {
-            try {
-                //커넥션 풀 고려 - 다시 Auto Commit true로 변경해서 커넥션 풀에 반납.
-                con.setAutoCommit(true);
-                con.close();
-            } catch (Exception e) {
-                log.info("error", e);
-            }
         }
     }
 }
